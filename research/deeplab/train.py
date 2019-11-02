@@ -470,6 +470,8 @@ def main(unused_argv):
       last_layers = model.get_extra_layer_scopes(
           FLAGS.last_layers_contain_logits_only)
       init_fn = None
+      print("=========checkpoint now")
+      print(FLAGS.tf_initial_checkpoint)
       if FLAGS.tf_initial_checkpoint:
         init_fn = train_utils.get_model_init_fn(
             FLAGS.train_logdir,
@@ -482,6 +484,7 @@ def main(unused_argv):
           init_fn=init_fn,
           summary_op=summary_op,
       )
+
 
       stop_hook = tf.train.StopAtStepHook(
           last_step=FLAGS.training_number_of_steps)
