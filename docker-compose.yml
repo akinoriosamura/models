@@ -12,3 +12,5 @@ services:
     runtime: nvidia
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - 9999:9999

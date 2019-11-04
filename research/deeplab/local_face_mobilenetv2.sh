@@ -38,7 +38,7 @@ WORK_DIR="${CURRENT_DIR}/deeplab"
 
 # Set up the working directories.
 CELEB_FOLDER="CelebAMask-HQ"
-EXP_FOLDER="exp/train_on_trainval_set_mobilenetv2"
+EXP_FOLDER="exp/face_19_mobilenetv2_dm1.0_pre_mobilenetv2_coco_voc_trainaug"
 DATASET_DIR="datasets"
 INIT_FOLDER="${WORK_DIR}/${DATASET_DIR}/${CELEB_FOLDER}/init_models"
 TRAIN_LOGDIR="${WORK_DIR}/${DATASET_DIR}/${CELEB_FOLDER}/${EXP_FOLDER}/train"
@@ -64,18 +64,18 @@ CELEB_DATASET="${WORK_DIR}/${DATASET_DIR}/${CELEB_FOLDER}/tfrecord"
 
 echo "===========train=============="
 # Train 10 iterations.
-NUM_ITERATIONS=10
-python "${WORK_DIR}"/train.py \
-  --logtostderr \
-  --train_split="train" \
-  --model_variant="mobilenet_v2" \
-  --output_stride=16 \
-  --train_crop_size="512,512" \
-  --train_batch_size=4 \
-  --training_number_of_steps="${NUM_ITERATIONS}" \
-  --train_logdir="${TRAIN_LOGDIR}" \
-  --dataset_dir="${CELEB_DATASET}" \
-  --dataset="celebamask_hq"
+# NUM_ITERATIONS=10
+# python "${WORK_DIR}"/train.py \
+#  --logtostderr \
+#  --train_split="train" \
+#  --model_variant="mobilenet_v2" \
+#  --output_stride=16 \
+#  --train_crop_size="512,512" \
+#  --train_batch_size=4 \
+#  --training_number_of_steps="${NUM_ITERATIONS}" \
+#  --train_logdir="${TRAIN_LOGDIR}" \
+#  --dataset_dir="${CELEB_DATASET}" \
+#  --dataset="celebamask_hq"
 #  --initialize_last_layer=False \
 #  --depth_multiplier=0.5 \
 #  --tf_initial_checkpoint="${INIT_FOLDER}/${CKPT_NAME}/model.ckpt-30000" \
@@ -84,6 +84,7 @@ echo "===========eval=============="
 # Run evaluation. This performs eval over the full val split (1449 images) and
 # will take a while.
 # Using the provided checkpoint, one should expect mIOU=75.34%.
+
 python "${WORK_DIR}"/eval.py \
   --logtostderr \
   --eval_split="val" \
@@ -92,7 +93,7 @@ python "${WORK_DIR}"/eval.py \
   --checkpoint_dir="${TRAIN_LOGDIR}" \
   --eval_logdir="${EVAL_LOGDIR}" \
   --dataset_dir="${CELEB_DATASET}" \
-  --dataset="celebamask_hq"
+  --dataset="celebamask_hq" \
   --max_number_of_evaluations=1
 
 echo "===========vis=============="
@@ -105,7 +106,7 @@ python "${WORK_DIR}"/vis.py \
   --checkpoint_dir="${TRAIN_LOGDIR}" \
   --vis_logdir="${VIS_LOGDIR}" \
   --dataset_dir="${CELEB_DATASET}" \
-  --dataset="celebamask_hq"
+  --dataset="celebamask_hq" \
   --max_number_of_iterations=1
 
 echo "===========export=============="
@@ -118,9 +119,10 @@ python "${WORK_DIR}"/export_model.py \
   --checkpoint_path="${CKPT_PATH}" \
   --export_path="${EXPORT_PATH}" \
   --model_variant="mobilenet_v2" \
-  --num_classes=21 \
+  --num_classes=19 \
   --crop_size=512 \
   --crop_size=512 \
+  --dataset="celebamask_hq" \
   --inference_scales=1.0
 
 # Run inference with the exported checkpoint.

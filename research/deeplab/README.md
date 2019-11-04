@@ -1,5 +1,23 @@
 # DeepLab: Deep Labelling for Semantic Image Segmentation
+## README
+### Requirements
+ - install docker-compose(<=19.3) 
+ - clone this repository
+ - set up env
+ ```
+ cd research/deeplab/
+ docker-compose up -d
+ docker attach tensorflow-gpu-1-14
+ pipenv install --system
+ ```
 
+### create dataset
+please check `research/deeplab/datasets`  
+
+### run
+please check `train-*.sh` and `local*.sh`  
+
+## original README
 DeepLab is a state-of-art deep learning model for semantic image segmentation,
 where the goal is to assign semantic labels (e.g., person, dog, cat and so on)
 to every pixel in the input image. Current implementation includes the following
