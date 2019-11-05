@@ -59,29 +59,63 @@ DATASET_URL="https://drive.google.com/uc?export=download&confirm=oS6Z&id=1badu11
 
 # download_and_uncompress "${DATASET_URL}"
 
+# =================== full labels ===================
+# cd "${CURRENT_DIR}"
+# echo "${CURRENT_DIR}"
+# echo "${WORK_DIR}/CelebAMask-HQ"
+# # Root path for CelebAMask-HQ dataset.
+# CELEBAMASK_HQ_ROOT="${WORK_DIR}/CelebAMask-HQ"
+# 
+# # create trainig labels
+# # split train and val
+# # full labels dataset
+# python ./convert_celebamask-hq.py  \
+#   --image_folder="${CELEBAMASK_HQ_ROOT}/CelebA-HQ-img" \
+#   --image_label_folder="${CELEBAMASK_HQ_ROOT}/CelebAMask-HQ-mask-anno" \
+#   --mask_folder="${CELEBAMASK_HQ_ROOT}/mask" \
+#   --output_dir="${CELEBAMASK_HQ_ROOT}"
+# 
+# # Build TFRecords of the dataset.
+# # First, create output directory for storing TFRecords.
+# OUTPUT_DIR="${WORK_DIR}/tfrecord"
+# mkdir -p "${OUTPUT_DIR}"
+# 
+# echo "Converting CelebAMask-HQ dataset..."
+# python ./build_CelebAMask-HQ_data.py  \
+#   --train_image_folder="${CELEBAMASK_HQ_ROOT}/images/train/" \
+#   --train_image_label_folder="${CELEBAMASK_HQ_ROOT}/annotations/train/" \
+#   --val_image_folder="${CELEBAMASK_HQ_ROOT}/images/val/" \
+#   --val_image_label_folder="${CELEBAMASK_HQ_ROOT}/annotations/val/" \
+#   --output_dir="${WORK_DIR}/tfrecord" \
+
+# =================== small labels ===================
+# skin, neck, hair labels dataset
 cd "${CURRENT_DIR}"
 echo "${CURRENT_DIR}"
 echo "${WORK_DIR}/CelebAMask-HQ"
 # Root path for CelebAMask-HQ dataset.
 CELEBAMASK_HQ_ROOT="${WORK_DIR}/CelebAMask-HQ"
+CELEBAMASK_HQ_CREATED="${WORK_DIR}/CelebAMask-HQ-skin-neck-hair"
+mkdir -p "${CELEBAMASK_HQ_CREATED}"
 
 # create trainig labels
 # split train and val
-python ./convert_celebamask-hq.py  \
+# skin, neck, hair labels dataset
+python ./convert_celebamask-hq_skin_neck_hair.py  \
   --image_folder="${CELEBAMASK_HQ_ROOT}/CelebA-HQ-img" \
   --image_label_folder="${CELEBAMASK_HQ_ROOT}/CelebAMask-HQ-mask-anno" \
-  --mask_folder="${CELEBAMASK_HQ_ROOT}/mask" \
-  --output_dir="${CELEBAMASK_HQ_ROOT}"
+  --mask_folder="${CELEBAMASK_HQ_CREATED}/mask" \
+  --output_dir="${CELEBAMASK_HQ_CREATED}"
 
 # Build TFRecords of the dataset.
 # First, create output directory for storing TFRecords.
-OUTPUT_DIR="${WORK_DIR}/tfrecord"
+OUTPUT_DIR="${CELEBAMASK_HQ_CREATED}/tfrecord"
 mkdir -p "${OUTPUT_DIR}"
 
 echo "Converting CelebAMask-HQ dataset..."
 python ./build_CelebAMask-HQ_data.py  \
-  --train_image_folder="${CELEBAMASK_HQ_ROOT}/images/train/" \
-  --train_image_label_folder="${CELEBAMASK_HQ_ROOT}/annotations/train/" \
-  --val_image_folder="${CELEBAMASK_HQ_ROOT}/images/val/" \
-  --val_image_label_folder="${CELEBAMASK_HQ_ROOT}/annotations/val/" \
-  --output_dir="${WORK_DIR}/tfrecord" \
+  --train_image_folder="${CELEBAMASK_HQ_CREATED}/images/train/" \
+  --train_image_label_folder="${CELEBAMASK_HQ_CREATED}/annotations/train/" \
+  --val_image_folder="${CELEBAMASK_HQ_CREATED}/images/val/" \
+  --val_image_label_folder="${CELEBAMASK_HQ_CREATED}/annotations/val/" \
+  --output_dir="${OUTPUT_DIR}" \

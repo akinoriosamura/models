@@ -2,6 +2,7 @@
 CelebAMask-HQ/
 pretrained/
 exp/
+pascal_voc_seg/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

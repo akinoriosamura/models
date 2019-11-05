@@ -37,19 +37,19 @@ CURRENT_DIR=$(pwd)
 WORK_DIR="${CURRENT_DIR}/deeplab"
 
 # Run model_test first to make sure the PYTHONPATH is correctly set.
-python "${WORK_DIR}"/model_test.py -v
+# python "${WORK_DIR}"/model_test.py -v
 
 # Go to datasets folder and download PASCAL VOC 2012 segmentation dataset.
 DATASET_DIR="datasets"
 cd "${WORK_DIR}/${DATASET_DIR}"
-sh download_and_convert_voc2012.sh
+# sh download_and_convert_voc2012.sh
 
 # Go back to original directory.
 cd "${CURRENT_DIR}"
 
 # Set up the working directories.
 PASCAL_FOLDER="pascal_voc_seg"
-EXP_FOLDER="exp/train_on_trainval_set"
+EXP_FOLDER="exp/xception_full_scratch"
 INIT_FOLDER="${WORK_DIR}/${DATASET_DIR}/${PASCAL_FOLDER}/init_models"
 TRAIN_LOGDIR="${WORK_DIR}/${DATASET_DIR}/${PASCAL_FOLDER}/${EXP_FOLDER}/train"
 EVAL_LOGDIR="${WORK_DIR}/${DATASET_DIR}/${PASCAL_FOLDER}/${EXP_FOLDER}/eval"
@@ -72,7 +72,7 @@ cd "${CURRENT_DIR}"
 PASCAL_DATASET="${WORK_DIR}/${DATASET_DIR}/${PASCAL_FOLDER}/tfrecord"
 
 # Train 10 iterations.
-NUM_ITERATIONS=10
+NUM_ITERATIONS=1000000
 python "${WORK_DIR}"/train.py \
   --logtostderr \
   --train_split="trainval" \
@@ -85,10 +85,10 @@ python "${WORK_DIR}"/train.py \
   --train_crop_size="513,513" \
   --train_batch_size=4 \
   --training_number_of_steps="${NUM_ITERATIONS}" \
-  --fine_tune_batch_norm=true \
-  --tf_initial_checkpoint="${INIT_FOLDER}/deeplabv3_pascal_train_aug/model.ckpt" \
+  --fine_tune_batch_norm=True \
   --train_logdir="${TRAIN_LOGDIR}" \
   --dataset_dir="${PASCAL_DATASET}"
+#  --tf_initial_checkpoint="${INIT_FOLDER}/sample/model.ckpt-7513" \
 
 # Run evaluation. This performs eval over the full val split (1449 images) and
 # will take a while.
