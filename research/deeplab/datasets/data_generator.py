@@ -101,7 +101,16 @@ _CELEBA_INFORMATION = DatasetDescriptor(
         'train': 24000,  # num of samples in images/training
         'val': 6000,  # num of samples in images/validation
     },
-    num_classes=19,
+    num_classes=19, # include background
+    ignore_label=255, # face_parsing参照
+)
+
+_CELEBA_CUSTOMIZED_INFORMATION = DatasetDescriptor(
+    splits_to_sizes={
+        'train': 24000,  # num of samples in images/training
+        'val': 6000,  # num of samples in images/validation
+    },
+    num_classes=4, # include background
     ignore_label=255, # face_parsing参照
 )
 
@@ -110,6 +119,7 @@ _DATASETS_INFORMATION = {
     'pascal_voc_seg': _PASCAL_VOC_SEG_INFORMATION,
     'ade20k': _ADE20K_INFORMATION,
     'celebamask_hq': _CELEBA_INFORMATION,
+    'celebamask_hq_customized': _CELEBA_CUSTOMIZED_INFORMATION,
 }
 
 # Default file pattern of TFRecord of TensorFlow Example.

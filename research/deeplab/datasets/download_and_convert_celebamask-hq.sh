@@ -1,19 +1,4 @@
-#!/bin/bash
-# Copyright 2018 The TensorFlow Authors All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-#
+
 # Script to download and preprocess the CelebAMask-HQ dataset.
 #
 # Usage:
@@ -95,13 +80,13 @@ echo "${CURRENT_DIR}"
 echo "${WORK_DIR}/CelebAMask-HQ"
 # Root path for CelebAMask-HQ dataset.
 CELEBAMASK_HQ_ROOT="${WORK_DIR}/CelebAMask-HQ"
-CELEBAMASK_HQ_CREATED="${WORK_DIR}/CelebAMask-HQ-skin-neck-hair"
+CELEBAMASK_HQ_CREATED="${WORK_DIR}/CelebAMask-HQ-skin-eye-lips"
 mkdir -p "${CELEBAMASK_HQ_CREATED}"
 
 # create trainig labels
 # split train and val
 # skin, neck, hair labels dataset
-python ./convert_celebamask-hq_skin_neck_hair.py  \
+python ./convert_celebamask-hq_skin_eye_lips.py  \
   --image_folder="${CELEBAMASK_HQ_ROOT}/CelebA-HQ-img" \
   --image_label_folder="${CELEBAMASK_HQ_ROOT}/CelebAMask-HQ-mask-anno" \
   --mask_folder="${CELEBAMASK_HQ_CREATED}/mask" \

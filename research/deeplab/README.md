@@ -17,6 +17,20 @@ please check `research/deeplab/datasets`
 ### run
 please check `train-*.sh` and `local*.sh`  
 
+### change celeba labels
+ - fix `datasets/convert_celebamask-hq.py` like `datasets/convert_celebamask-hq_skin_eye_lips.py`  
+ - run the [fixed convert scripts] and create customized celeba dataset  
+ - fix `_CELEBA_CUSTOMIZED_INFORMATION` in `datasets/data_generator.py` to match fixed converter label num  
+ - adjust `local_test_face_mobilenetv2.sh`  
+
+### export ckpt to pb
+ - fix `export_model_pb.sh`  
+ - `sh export_model_pb.sh`  
+
+### export pb to tflite
+ - fix `export_model_tflite.sh`  
+ - `sh export_model_tflite.sh`  
+
 ## original README
 DeepLab is a state-of-art deep learning model for semantic image segmentation,
 where the goal is to assign semantic labels (e.g., person, dog, cat and so on)

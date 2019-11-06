@@ -34,7 +34,7 @@ flags.DEFINE_string('export_path', None,
 
 flags.DEFINE_integer('num_classes', 21, 'Number of classes.')
 
-flags.DEFINE_multi_integer('crop_size', [513, 513],
+flags.DEFINE_list('export_crop_size', '513,513',
                            'Crop size [height, width].')
 
 # For `xception_65`, use atrous_rates = [12, 24, 36] if output_stride = 8, or
@@ -43,7 +43,7 @@ flags.DEFINE_multi_integer('crop_size', [513, 513],
 flags.DEFINE_multi_integer('atrous_rates', None,
                            'Atrous rates for atrous spatial pyramid pooling.')
 
-flags.DEFINE_integer('output_stride', 8,
+flags.DEFINE_integer('output_stride', 16,
                      'The ratio of input to output spatial resolution.')
 
 # Change to [0.5, 0.75, 1.0, 1.25, 1.5, 1.75] for multi-scale inference.
@@ -88,11 +88,12 @@ def _create_input_tensors():
   # Squeeze the dimension in axis=0 since `preprocess_image_and_label` assumes
   # image to be 3-D.
   image = tf.squeeze(input_image, axis=0)
+  crop_size=[int(sz) for sz in FLAGS.export_crop_size]
   resized_image, image, _ = input_preprocess.preprocess_image_and_label(
       image,
       label=None,
-      crop_height=FLAGS.crop_size[0],
-      crop_width=FLAGS.crop_size[1],
+      crop_height=crop_size[0],
+      crop_width=crop_size[1],
       min_resize_value=FLAGS.min_resize_value,
       max_resize_value=FLAGS.max_resize_value,
       resize_factor=FLAGS.resize_factor,
@@ -113,10 +114,11 @@ def main(unused_argv):
 
   with tf.Graph().as_default():
     image, image_size, resized_image_size = _create_input_tensors()
+    crop_size=[int(sz) for sz in FLAGS.export_crop_size]
 
     model_options = common.ModelOptions(
         outputs_to_num_classes={common.OUTPUT_TYPE: FLAGS.num_classes},
-        crop_size=FLAGS.crop_size,
+        crop_size=crop_size,
         atrous_rates=FLAGS.atrous_rates,
         output_stride=FLAGS.output_stride)
 
