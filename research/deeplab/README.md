@@ -30,6 +30,31 @@ please check `train-*.sh` and `local*.sh`
 ### export pb to tflite
  - fix `export_model_tflite.sh`  
  - `sh export_model_tflite.sh`  
+ ```
+変換されたモデルは513x513(指定インプットサイズ) RGB入力を想定し、前処理（入力画像のサイズ変更と埋め込み）および後処理（埋め込み領域の切り取りと元の入力サイズへのサイズ変更）を含まないことに注意
+外部で実装必要
+ ```
+
+### Error
+```
+in tflite_convert float pb model to tflite
+
+has mis-matching actual and final data types (data_type=Uint8, final_data_type=Float)
+```
+->input typeがuint8のため  
+[solution](https://github.com/tensorflow/tensorflow/issues/23747#issuecomment-531290937)
+
+```
+in run benchmark
+
+TFLiteBenchmark[6393:2911041] tensorflow/lite/kernels/depthwise_conv.cc:108 params->depth_multiplier * SizeOfDimension(input, 3) != SizeOfDimension(filter, 3) (0 != 32)
+2019-11-06 14:45:54.359143+0900 TFLiteBenchmark[6393:2911041] Node number 17 (DEPTHWISE_CONV_2D) failed to prepare.
+```
+->公式通りのモデル作成、実行、convertなら測定可能  
+https://github.com/akinoriosamura/models/blob/master/research/deeplab/g3doc/quantize.md
+->input, output arrayが違ってた  
+->スクリプト`export_model_tflite.sh`参照
+
 
 ## original README
 DeepLab is a state-of-art deep learning model for semantic image segmentation,

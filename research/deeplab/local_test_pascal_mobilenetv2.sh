@@ -13,7 +13,7 @@ WORK_DIR="${CURRENT_DIR}/deeplab"
 
 # Set up the working directories.
 PASCAL_FOLDER="pascal_voc_seg"
-EXP_FOLDER="exp/mobilev2_full_scratch"
+EXP_FOLDER="exp/tflite_sample"
 DATASET_DIR="datasets"
 INIT_FOLDER="${WORK_DIR}/${DATASET_DIR}/${PASCAL_FOLDER}/init_models"
 TRAIN_LOGDIR="${WORK_DIR}/${DATASET_DIR}/${PASCAL_FOLDER}/${EXP_FOLDER}/train"
@@ -47,20 +47,37 @@ echo "===========train=============="
 # For `xception_65`, use atrous_rates = [12, 24, 36] if output_stride = 8, or
 # rates = [6, 12, 18] if output_stride = 16. For `mobilenet_v2`, use None. Note
 
-nohup python "${WORK_DIR}"/train.py \
-    --logtostderr \
-    --train_split="trainval" \
-    --model_variant="mobilenet_v2" \
-    --train_crop_size="513,513" \
-    --train_batch_size=24 \
-    --fine_tune_batch_norm=true \
-    --training_number_of_steps=1000000 \
-    --dataset="pascal_voc_seg" \
-    --train_logdir=${TRAIN_LOGDIR} \
-    --dataset_dir=${PASCAL_DATASET} &
-#    --tf_initial_checkpoint="${INIT_FOLDER}/${CKPT_NAME}/model.ckpt-30000"
-# --initialize_last_layer=False
+python "${WORK_DIR}"/train.py \
+  --logtostderr \
+  --train_split="trainval" \
+  --model_variant="mobilenet_v2" \
+  --train_crop_size="513,513" \
+  --train_batch_size=24 \
+  --fine_tune_batch_norm=true \
+  --training_number_of_steps=1000000 \
+  --dataset="pascal_voc_seg" \
+  --train_logdir=${TRAIN_LOGDIR} \
+  --dataset_dir=${PASCAL_DATASET} \
+  --tf_initial_checkpoint="${INIT_FOLDER}/${CKPT_NAME}/model.ckpt-30000" \
+  --initialize_last_layer=False
 # --depth_multiplier=0.5 \
+
+# python "${WORK_DIR}"/train.py \
+#     --logtostderr \
+#     --training_number_of_steps=3000 \
+#     --train_split="train" \
+#     --model_variant="mobilenet_v2" \
+#     --output_stride=16 \
+#     --train_crop_size="513,513" \
+#     --train_batch_size=8 \
+#     --base_learning_rate=3e-5 \
+#     --dataset="pascal_voc_seg" \
+#     --initialize_last_layer \
+#     --quantize_delay_step=0 \
+#     --tf_initial_checkpoint="${INIT_FOLDER}/${CKPT_NAME}/model.ckpt-30000" \
+#     --train_logdir=${TRAIN_LOGDIR} \
+#     --dataset_dir=${PASCAL_DATASET}
+
 echo "===========eval=============="
 # Run evaluation. This performs eval over the full val split (1449 images) and
 # will take a while.

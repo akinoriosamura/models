@@ -12,8 +12,8 @@ CURRENT_DIR=$(pwd)
 WORK_DIR="${CURRENT_DIR}/deeplab"
 
 # Set up the working directories.
-DATASET_PATH="deeplab/datasets/CelebAMask-HQ/CelebAMask-HQ-skin-neck-hair"
-CHECKPOINT_PATH="${DATASET_PATH}/init_models/face_3_mobilenetv2_full_scrutch/model.ckpt-29454"
+DATASET_PATH="deeplab/datasets/CelebAMask-HQ/CelebAMask-HQ"
+CHECKPOINT_PATH="${DATASET_PATH}/init_models/face_19_mobilenetv2_dm1.0_pre_mobilenetv2_coco_voc_trainaug/model.ckpt-3589"
 OUTPUT_DIR="${DATASET_PATH}/tflite"
 
 mkdir -p "${OUTPUT_DIR}"
