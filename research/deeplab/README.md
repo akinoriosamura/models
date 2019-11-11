@@ -35,6 +35,10 @@ please check `train-*.sh` and `local*.sh`
 外部で実装必要
  ```
 
+### quantize
+量子化するなら学習中にするべし  
+最初はfloatで学習し、のちに量子化でfine tuningすべし  
+
 ### Error
 ```
 in tflite_convert float pb model to tflite

@@ -12,14 +12,14 @@ CURRENT_DIR=$(pwd)
 WORK_DIR="${CURRENT_DIR}/deeplab"
 
 # Set up the working directories.
-DATASET_PATH="deeplab/datasets/CelebAMask-HQ/CelebAMask-HQ"
-CHECKPOINT_PATH="${DATASET_PATH}/init_models/face_19_mobilenetv2_dm1.0_pre_mobilenetv2_coco_voc_trainaug/model.ckpt-3589"
+DATASET_PATH="deeplab/datasets/CelebAMask-HQ/CelebAMask-HQ-skin-eye-lips"
+CHECKPOINT_PATH="${DATASET_PATH}/exp/face_3_mobilenetv2_pretrained/train/model.ckpt-37872"
 OUTPUT_DIR="${DATASET_PATH}/tflite"
 
 mkdir -p "${OUTPUT_DIR}"
 
 python deeplab/export_model.py \
   --checkpoint_path=${CHECKPOINT_PATH} \
-  --num_classes=19 \
+  --num_classes=4 \
   --export_crop_size="512,512" \
   --export_path=${OUTPUT_DIR}/frozen_inference_graph.pb

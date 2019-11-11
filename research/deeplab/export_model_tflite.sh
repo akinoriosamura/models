@@ -12,12 +12,12 @@ CURRENT_DIR=$(pwd)
 WORK_DIR="${CURRENT_DIR}/deeplab"
 
 # Set up the working directories.
-DATASET_PATH="deeplab/datasets/CelebAMask-HQ/CelebAMask-HQ"
+DATASET_PATH="deeplab/datasets/CelebAMask-HQ/CelebAMask-HQ-skin-eye-lips"
 OUTPUT_DIR="${DATASET_PATH}/tflite"
 
 tflite_convert \
   --graph_def_file=${OUTPUT_DIR}/frozen_inference_graph.pb \
-  --output_file=${OUTPUT_DIR}/face_19_sample.tflite \
+  --output_file=${OUTPUT_DIR}/celeba_skin_eye_lips.tflite \
   --output_format=TFLITE \
   --input_shape=1,512,512,3 \
   --inference_input_type=FLOAT \

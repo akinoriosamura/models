@@ -49,11 +49,12 @@ echo "===========train=============="
 # For `xception_65`, use atrous_rates = [12, 24, 36] if output_stride = 8, or
 # rates = [6, 12, 18] if output_stride = 16. For `mobilenet_v2`, use None. Note
 NUM_ITERATIONS=1000000
-python "${WORK_DIR}"/train.py \
+nohup python "${WORK_DIR}"/train.py \
   --logtostderr \
   --train_split="train" \
   --model_variant="mobilenet_v2" \
   --train_crop_size="512,512" \
+  --output_stride=16 \
   --fine_tune_batch_norm=True \
   --train_batch_size=24 \
   --training_number_of_steps="${NUM_ITERATIONS}" \
@@ -61,37 +62,37 @@ python "${WORK_DIR}"/train.py \
   --dataset_dir="${CELEB_DATASET}" \
   --dataset="${DATASET_NAME}" \
   --tf_initial_checkpoint="${INIT_FOLDER}/${CKPT_NAME}/model.ckpt-30000" \
-  --initialize_last_layer=False
-#  --depth_multiplier=0.5 \
+  --initialize_last_layer=False &
+# --depth_multiplier=0.5 \
 echo "===========eval=============="
 # Run evaluation. This performs eval over the full val split (1449 images) and
 # will take a while.
 # Using the provided checkpoint, one should expect mIOU=75.34%.
 
-# python "${WORK_DIR}"/eval.py \
-#   --logtostderr \
-#   --eval_split="val" \
-#   --model_variant="mobilenet_v2" \
-#   --eval_crop_size="512,512" \
-#   --checkpoint_dir="${TRAIN_LOGDIR}" \
-#   --eval_logdir="${EVAL_LOGDIR}" \
-#   --dataset_dir="${CELEB_DATASET}" \
-#   --dataset="${DATASET_NAME}" \
-#   --max_number_of_evaluations=1
-# 
-# echo "===========vis=============="
-# # Visualize the results.
-# python "${WORK_DIR}"/vis.py \
-#   --logtostderr \
-#   --vis_split="val" \
-#   --model_variant="mobilenet_v2" \
-#   --vis_crop_size="512,512" \
-#   --checkpoint_dir="${TRAIN_LOGDIR}" \
-#   --vis_logdir="${VIS_LOGDIR}" \
-#   --dataset_dir="${CELEB_DATASET}" \
-#   --dataset="${DATASET_NAME}" \
-#   --max_number_of_iterations=1
-# 
+python "${WORK_DIR}"/eval.py \
+  --logtostderr \
+  --eval_split="val" \
+  --model_variant="mobilenet_v2" \
+  --eval_crop_size="512,512" \
+  --checkpoint_dir="${TRAIN_LOGDIR}" \
+  --eval_logdir="${EVAL_LOGDIR}" \
+  --dataset_dir="${CELEB_DATASET}" \
+  --dataset="${DATASET_NAME}" \
+  --max_number_of_evaluations=1
+
+echo "===========vis=============="
+# Visualize the results.
+python "${WORK_DIR}"/vis.py \
+  --logtostderr \
+  --vis_split="val" \
+  --model_variant="mobilenet_v2" \
+  --vis_crop_size="512,512" \
+  --checkpoint_dir="${TRAIN_LOGDIR}" \
+  --vis_logdir="${VIS_LOGDIR}" \
+  --dataset_dir="${CELEB_DATASET}" \
+  --dataset="${DATASET_NAME}" \
+  --max_number_of_iterations=1
+
 # echo "===========export=============="
 # Export the trained checkpoint.
 # CKPT_PATH="${TRAIN_LOGDIR}/model.ckpt-${NUM_ITERATIONS}"
