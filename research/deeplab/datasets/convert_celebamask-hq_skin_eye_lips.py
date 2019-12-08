@@ -38,60 +38,74 @@ def _convert_and_save_dataset(face_data, face_sep_mask, mask_path, output_dir):
     counter = 0
     total = 0
     for i in range(15):
-
-        atts = [
-            'skin',
-            'eye',
-            'lip']
-        """
-        atts = [
-            'skin',
-            'l_brow',
-            'r_brow',
-            'l_eye',
-            'r_eye',
-            'eye_g',
-            'l_ear',
-            'r_ear',
-            'ear_r',
-            'nose',
-            'mouth',
-            'u_lip',
-            'l_lip',
-            'neck',
-            'neck_l',
-            'cloth',
-            'hair',
-            'hat']
-        """
         print("process dataset : ", i)
 
         for j in range(i * 2000, (i + 1) * 2000):
-            
-            mask = np.zeros((512, 512))
+            atts = {
+                'skin':[0, 0, 192],
+                'l_eye': [0,195,0],
+                'r_eye': [0,195,0],
+                'u_lip': [128, 0, 0],
+                'l_lip': [128, 0, 0],
+                'mouth': [0, 200, 193]
+                }
 
-            for l, att_raw in enumerate(atts, 1):
-                if att_raw == 'skin':
-                    att_list = [att_raw]
-                elif att_raw == 'eye':
-                    att_list = ['l_'+att_raw, 'r_'+att_raw]
-                elif att_raw == 'lip':
-                    att_list = ['u_'+att_raw, 'l_'+att_raw]
-                for att in att_list:
-                    total += 1
-                    mask_file_name = ''.join(
-                        [str(j).rjust(5, '0'), '_', att, '.png'])
-                    # print(mask_file_name)
-                    path = osp.join(face_sep_mask, str(i), mask_file_name)
+            all_atts = {
+                'skin': [0, 0, 0],
+                'l_brow': [0, 0, 0],
+                'r_brow': [0, 0, 0],
+                'l_eye': [0, 0, 0],
+                'r_eye': [0, 0, 0],
+                'eye_g': [0, 0, 0],
+                'l_ear': [0, 0, 0],
+                'r_ear': [0, 0, 0],
+                'ear_r': [0, 0, 0],
+                'nose': [0, 0, 0],
+                'mouth': [0, 0, 0],
+                'u_lip': [0, 0, 0],
+                'l_lip': [0, 0, 0],
+                'neck': [0, 0, 0],
+                'neck_l': [0, 0, 0],
+                'cloth': [0, 0, 0],
+                'hair': [0, 0, 0],
+                'hat': [0, 0, 0]
+                }
+            # mask = np.zeros((512, 512))
+            target_img = cv2.imread(os.path.join(face_data, str(j)+".jpg"))
+            sep_mask = np.zeros(target_img.shape)
+            white = [255, 255, 255]
 
-                    if os.path.exists(path):
-                        counter += 1
-                        sep_mask = np.array(Image.open(path).convert('P'))
-                        # print(np.unique(sep_mask))
+            # add color to use attr
+            for att, att_rgb in atts.items():
+                del all_atts[att]
 
-                        mask[sep_mask == 225] = l
+                mask_file_name = ''.join(
+                    [str(j).rjust(5, '0'), '_', att, '.png'])
+                # print(mask_file_name)
+                path = osp.join(face_sep_mask, str(i), mask_file_name)
+
+                if os.path.exists(path):
+                    counter += 1
+                    anno = np.array(cv2.imread(path))
+                    anno = cv2.resize(anno, target_img.shape[:2])
+                    sep_mask[np.where((anno == white).all(axis=2))] = att_rgb
+                    # print(np.unique(sep_mask))
+
+            # remove unuse att from sep mask
+            for unuse_att, block in all_atts.items():
+                mask_file_name = ''.join(
+                    [str(j).rjust(5, '0'), '_', unuse_att, '.png'])
+                # print(mask_file_name)
+                path = osp.join(face_sep_mask, str(i), mask_file_name)
+
+                if os.path.exists(path):
+                    counter += 1
+                    anno = np.array(cv2.imread(path))
+                    anno = cv2.resize(anno, target_img.shape[:2])
+                    sep_mask[np.where((anno == white).all(axis=2))] = block
+
             # save mask by same raw image name but png
-            cv2.imwrite('{}/{}.png'.format(mask_path, j), mask)
+            cv2.imwrite('{}/{}.png'.format(mask_path, j), sep_mask)
 
     print(counter, total)
     # get images and masks and split and save

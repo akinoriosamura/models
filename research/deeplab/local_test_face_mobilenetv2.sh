@@ -14,7 +14,7 @@ WORK_DIR="${CURRENT_DIR}/deeplab"
 # Set up the working directories.
 DATASET_DIR="datasets/CelebAMask-HQ"
 CELEB_FOLDER="CelebAMask-HQ-skin-eye-lips"
-EXP_FOLDER="exp/face_3_mobilenetv2_pretrained"
+EXP_FOLDER="exp/face_3_mobilenetv2_1024_full_scratch"
 INIT_FOLDER="${WORK_DIR}/${DATASET_DIR}/${CELEB_FOLDER}/init_models"
 TRAIN_LOGDIR="${WORK_DIR}/${DATASET_DIR}/${CELEB_FOLDER}/${EXP_FOLDER}/train"
 EVAL_LOGDIR="${WORK_DIR}/${DATASET_DIR}/${CELEB_FOLDER}/${EXP_FOLDER}/eval"
@@ -27,13 +27,13 @@ mkdir -p "${VIS_LOGDIR}"
 mkdir -p "${EXPORT_DIR}"
 
 # Copy locally the trained checkpoint as the initial checkpoint.
-#TF_INIT_ROOT="http://download.tensorflow.org/models"
-CKPT_NAME="deeplabv3_mnv2_pascal_trainval"
-#TF_INIT_CKPT="${CKPT_NAME}_2018_01_29.tar.gz"
-#cd "${INIT_FOLDER}"
-#wget -nd -c "${TF_INIT_ROOT}/${TF_INIT_CKPT}"
-#tar -xf "${TF_INIT_CKPT}"
-#cd "${CURRENT_DIR}"
+# TF_INIT_ROOT="http://download.tensorflow.org/models"
+# CKPT_NAME="deeplabv3_mnv2_pascal_trainval"
+# TF_INIT_CKPT="${CKPT_NAME}_2018_01_29.tar.gz"
+# cd "${INIT_FOLDER}"
+# wget -nd -c "${TF_INIT_ROOT}/${TF_INIT_CKPT}"
+# tar -xf "${TF_INIT_CKPT}"
+# cd "${CURRENT_DIR}"
 
 CELEB_DATASET="${WORK_DIR}/${DATASET_DIR}/${CELEB_FOLDER}/tfrecord"
 
@@ -49,53 +49,52 @@ echo "===========train=============="
 # For `xception_65`, use atrous_rates = [12, 24, 36] if output_stride = 8, or
 # rates = [6, 12, 18] if output_stride = 16. For `mobilenet_v2`, use None. Note
 NUM_ITERATIONS=1000000
-nohup python "${WORK_DIR}"/train.py \
-  --logtostderr \
-  --train_split="train" \
-  --model_variant="mobilenet_v2" \
-  --train_crop_size="512,512" \
-  --output_stride=16 \
-  --fine_tune_batch_norm=True \
-  --train_batch_size=24 \
-  --training_number_of_steps="${NUM_ITERATIONS}" \
-  --train_logdir="${TRAIN_LOGDIR}" \
-  --dataset_dir="${CELEB_DATASET}" \
-  --dataset="${DATASET_NAME}" \
-  --tf_initial_checkpoint="${INIT_FOLDER}/${CKPT_NAME}/model.ckpt-30000" \
-  --initialize_last_layer=False &
+# python "${WORK_DIR}"/train.py \
+#   --logtostderr \
+#   --train_split="train" \
+#   --model_variant="mobilenet_v2" \
+#   --train_crop_size="1024,1024" \
+#   --output_stride=16 \
+#   --fine_tune_batch_norm=True \
+#   --train_batch_size=4 \
+#   --training_number_of_steps="${NUM_ITERATIONS}" \
+#   --train_logdir="${TRAIN_LOGDIR}" \
+#   --dataset_dir="${CELEB_DATASET}" \
+#   --dataset="${DATASET_NAME}"
 # --depth_multiplier=0.5 \
 echo "===========eval=============="
 # Run evaluation. This performs eval over the full val split (1449 images) and
 # will take a while.
 # Using the provided checkpoint, one should expect mIOU=75.34%.
 
-python "${WORK_DIR}"/eval.py \
-  --logtostderr \
-  --eval_split="val" \
-  --model_variant="mobilenet_v2" \
-  --eval_crop_size="512,512" \
-  --checkpoint_dir="${TRAIN_LOGDIR}" \
-  --eval_logdir="${EVAL_LOGDIR}" \
-  --dataset_dir="${CELEB_DATASET}" \
-  --dataset="${DATASET_NAME}" \
-  --max_number_of_evaluations=1
-
-echo "===========vis=============="
-# Visualize the results.
-python "${WORK_DIR}"/vis.py \
-  --logtostderr \
-  --vis_split="val" \
-  --model_variant="mobilenet_v2" \
-  --vis_crop_size="512,512" \
-  --checkpoint_dir="${TRAIN_LOGDIR}" \
-  --vis_logdir="${VIS_LOGDIR}" \
-  --dataset_dir="${CELEB_DATASET}" \
-  --dataset="${DATASET_NAME}" \
-  --max_number_of_iterations=1
-
+# python "${WORK_DIR}"/eval.py \
+#   --logtostderr \
+#   --eval_split="val" \
+#   --model_variant="mobilenet_v2" \
+#   --eval_crop_size="1024,1024" \
+#   --output_stride=16 \
+#   --checkpoint_dir="${TRAIN_LOGDIR}" \
+#   --eval_logdir="${EVAL_LOGDIR}" \
+#   --dataset_dir="${CELEB_DATASET}" \
+#   --dataset="${DATASET_NAME}" \
+#   --max_number_of_evaluations=1
+# 
+# echo "===========vis=============="
+# # Visualize the results.
+# python "${WORK_DIR}"/vis.py \
+#   --logtostderr \
+#   --vis_split="val" \
+#   --model_variant="mobilenet_v2" \
+#   --vis_crop_size="1024,1024" \
+#   --output_stride=16 \
+#   --checkpoint_dir="${TRAIN_LOGDIR}" \
+#   --vis_logdir="${VIS_LOGDIR}" \
+#   --dataset_dir="${CELEB_DATASET}" \
+#   --dataset="${DATASET_NAME}" \
+#   --max_number_of_iterations=1
 # echo "===========export=============="
-# Export the trained checkpoint.
-# CKPT_PATH="${TRAIN_LOGDIR}/model.ckpt-${NUM_ITERATIONS}"
+# # Export the trained checkpoint.
+# CKPT_PATH="${TRAIN_LOGDIR}/model.ckpt-251151"
 # EXPORT_PATH="${EXPORT_DIR}/frozen_inference_graph.pb"
 # 
 # python "${WORK_DIR}"/export_model.py \
@@ -103,11 +102,22 @@ python "${WORK_DIR}"/vis.py \
 #   --checkpoint_path="${CKPT_PATH}" \
 #   --export_path="${EXPORT_PATH}" \
 #   --model_variant="mobilenet_v2" \
-#   --num_classes=19 \
-#   --crop_size=512 \
-#   --crop_size=512 \
+#   --num_classes=4 \
+#   --crop_size=1024 \
+#   --crop_size=1024 \
 #   --dataset="${DATASET_NAME}" \
 #   --inference_scales=1.0
-
+# 
 # Run inference with the exported checkpoint.
 # Please refer to the provided deeplab_demo.ipynb for an example.
+echo "=================tflite=================="
+# Set up the working directories.
+tflite_convert \
+  --graph_def_file=${EXPORT_PATH} \
+  --output_file=${EXPORT_DIR}/celeba_skin_eye_lips_1024.tflite \
+  --output_format=TFLITE \
+  --input_shape=1,1024,1024,3 \
+  --inference_input_type=FLOAT \
+  --inference_type=FLOAT \
+  --input_arrays="MobilenetV2/MobilenetV2/input" \
+  --output_arrays="ArgMax"

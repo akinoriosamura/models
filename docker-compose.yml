@@ -1,11 +1,11 @@
 version: '2.3'
 services:
-  tensorflow-gpu-1-14:
+  tensorflow-gpu-1-14-deeplab:
     stdin_open: true
     tty: true
     command: /bin/bash
     build: .
-    container_name: tensorflow-gpu-1-14
+    container_name: tensorflow-gpu-1-14-deeplab
     volumes:
       - ./:/usr/src/app
       - /data:/data
