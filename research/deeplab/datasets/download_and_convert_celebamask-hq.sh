@@ -74,19 +74,19 @@ DATASET_URL="https://drive.google.com/uc?export=download&confirm=oS6Z&id=1badu11
 #   --output_dir="${WORK_DIR}/tfrecord" \
 
 # =================== small labels ===================
-# skin, neck, hair labels dataset
+# hair labels dataset
 cd "${CURRENT_DIR}"
 echo "${CURRENT_DIR}"
 echo "${WORK_DIR}/CelebAMask-HQ"
 # Root path for CelebAMask-HQ dataset.
 CELEBAMASK_HQ_ROOT="${WORK_DIR}/CelebAMask-HQ"
-CELEBAMASK_HQ_CREATED="${WORK_DIR}/CelebAMask-HQ-skin-eye-lips"
+CELEBAMASK_HQ_CREATED="${WORK_DIR}/CelebAMask-HQ-hair"
 mkdir -p "${CELEBAMASK_HQ_CREATED}"
 
 # create trainig labels
 # split train and val
 # skin, neck, hair labels dataset
-python ./convert_celebamask-hq_skin_eye_lips.py  \
+python ./convert_celebamask-hq_hair.py  \
   --image_folder="${CELEBAMASK_HQ_ROOT}/CelebA-HQ-img" \
   --image_label_folder="${CELEBAMASK_HQ_ROOT}/CelebAMask-HQ-mask-anno" \
   --mask_folder="${CELEBAMASK_HQ_CREATED}/mask" \
